@@ -22,20 +22,35 @@ func C2F(celsius float64) float64 {
 // printDegreeConversion verbosely outputs the results of a degree conversion
 // (either F->C or C->F) to the command line.
 func printDegreeConversion(s string, fromScale string, toScale string) {
+
+	// Check that temperature scales are valid.
+	if (toScale != "C") && (toScale != "F") {
+		fmt.Println(toScale, "is not a valid temperature scale to convert to.")
+		return
+	}
+	if (fromScale != "C") && (fromScale != "F") {
+		fmt.Println(fromScale, "is not a valid temperature scale to convert from.")
+		return
+	}
+
+	// Print the conversion about to be performed.
 	fmt.Printf("Converting %s\u00b0%s to \u00b0%s:\n", s, fromScale, toScale)
-	var r float64 // Conversion result
+
+	// Convert input value from string to float if possible, or print error.
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		fmt.Printf("Error attempting to convert %s to a real number.\n", s)
+		fmt.Println(s, "is not a valid temperature value.")
 		fmt.Println(err)
 		return
-	} else {
-		switch fromScale {
-		case "C":
-			r = C2F(v)
-		case "F":
-			r = F2C(v)
-		}
+	}
+
+	// Convert value and print result.
+	var r float64 // Conversion result variable
+	switch fromScale {
+	case "C":
+		r = C2F(v)
+	case "F":
+		r = F2C(v)
 	}
 	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, r, toScale)
 }
