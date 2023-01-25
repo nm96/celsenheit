@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+var usage string =
+`Usage: celsenheit degree_value convert_from convert_to
+e.g. : celsenheit 20.0 C F`
+
 
 // F2C converts a temperature value from Fahrenheit to Celsius. 
 func F2C(fahrenheit float64) float64 {
@@ -57,7 +61,6 @@ func printDegreeConversion(s string, fromScale string, toScale string) {
 
 
 func main() {
-	usage := "Usage: celsenheit degree_value convert_from convert_to \ne.g. : celsenheit 20.0 C F"
 	if len(os.Args) < 4 {
 		fmt.Println("Not enough command line arguments.")
 		fmt.Println(usage)
