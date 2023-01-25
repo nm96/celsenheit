@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
-	"flag"
+	"os"
 )
 
 
@@ -21,22 +21,9 @@ func C2F(celsius float64) float64 {
 
 // printDegreeConversion verbosely outputs the results of a degree conversion
 // (either F->C or C->F) to the command line.
-func printDegreeConversion(s string, toScale string) {
-	var fromScale string
-	var r float64
-
-	switch toScale {
-	case "C":
-		fromScale = "F"
-	case "F":
-		fromScale = "C"
-	default:
-		fmt.Println("Scale (C or F) not provided for degree conversion")
-		return
-	}
-
+func printDegreeConversion(s string, fromScale string, toScale string) {
 	fmt.Printf("Converting %s\u00b0%s to \u00b0%s:\n", s, fromScale, toScale)
-
+	var r float64 // Conversion result
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
 		fmt.Printf("Error attempting to convert %s to a real number.\n", s)
@@ -56,21 +43,8 @@ func printDegreeConversion(s string, toScale string) {
 
 
 func main() {
-	// Declare command-line flags for converting C <-> F
-	// (Flag is the symbol of the scale you want to convert TO)
-	C2Fptr := flag.Bool("F", false, "Bool: convert from Celsius to Fahrenheit?")
-	F2Cptr := flag.Bool("C", false, "Bool: convert from Fahrenheit to Celsius?")
-	flag.Parse()
-
-	// Convert from C to F if required.
-	if *C2Fptr {
-		Cstr := flag.Args()[0]
-		printDegreeConversion(Cstr, "F")
-	}
-
-	// Convert from F to C if required
-	if *F2Cptr {
-		Fstr := flag.Args()[0]
-		printDegreeConversion(Fstr, "C")
-	}
+	valueString := os.Args[1]
+	fromScale := os.Args[2]
+	toScale := os.Args[3]
+	printDegreeConversion(valueString, fromScale, toScale)
 }
