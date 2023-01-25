@@ -37,12 +37,25 @@ func printDegreeConversion(s string, fromScale string, toScale string) {
 			r = F2C(v)
 		}
 	}
-
 	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, r, toScale)
 }
 
 
 func main() {
+	usage := "Usage: celsenheit degree_value convert_from convert_to \ne.g. : celsenheit 20.0 C F"
+	if len(os.Args) < 4 {
+		fmt.Println("Not enough command line arguments.")
+		fmt.Println(usage)
+		return
+	} else if len(os.Args) > 4 {
+		fmt.Println("Too many command line arguments.")
+		fmt.Println(usage)
+		return
+	} else if os.Args[2] == os.Args[3] {
+		fmt.Println("Temperature scales must be different.")
+		fmt.Println(usage)
+		return
+	}
 	valueString := os.Args[1]
 	fromScale := os.Args[2]
 	toScale := os.Args[3]
