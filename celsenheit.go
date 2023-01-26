@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"strconv"
 	"os"
+	"bufio"
+	"math/rand"
+	"time"
+	"log"
+	"strings"
 )
 
 var usage string =
@@ -43,9 +48,7 @@ func printDegreeConversion(s string, fromScale string, toScale string) {
 	// Convert input value from string to float if possible, or print error.
 	v, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		fmt.Println(s, "is not a valid temperature value.")
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 
 	// Convert value and print result.
@@ -60,7 +63,56 @@ func printDegreeConversion(s string, fromScale string, toScale string) {
 }
 
 
+func randFloat(min, max float64) float64 {
+	return min + rand.Float64() * (max - min)
+}
+
+
+func runGuess() {
+	// Define ranges for values to translate
+	Cmin, Cmax := -50.0, 50.0
+	Fmin, Fmax := -60.0, 120.0
+	var fromScale, toScale string
+	var val, ans float64
+	switch rand.Intn(2) {
+	case 0:
+		fromScale, toScale = "C", "F"
+		val = randFloat(Cmin, Cmax)
+		ans = C2F(val)
+
+	case 1:
+		fromScale, toScale = "F", "C"
+		val = randFloat(Fmin, Fmax)
+		ans = F2C(val)
+	}
+	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
+	reader := bufio.NewReader(os.Stdin)
+	guessStr, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	guessStr = strings.TrimSpace(guessStr) // Remove \n
+	guess, err := strconv.ParseFloat(guessStr, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Your guess:", guess)
+	fmt.Printf("%.3g\u00b0%s is equivalent to %.3g\u00b0%s.\n", val, fromScale, ans, toScale)
+}
+
+
 func main() {
+	rand.Seed(time.Now().UnixNano())
+	if len(os.Args) == 1 {
+		fmt.Println("Celsenheit guess mode: practice temperature conversions on random values!")
+		fmt.Println("=========================================================================")
+		fmt.Println()
+		for {
+			runGuess()
+			fmt.Println()
+		}
+		return
+	}
 	if len(os.Args) < 4 {
 		fmt.Println("Not enough command line arguments.")
 		fmt.Println(usage)
