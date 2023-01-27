@@ -134,6 +134,7 @@ func judgeGuess(guess, ans float64, toScale string) {
 		aC = F2C(ans)
 	}
 
+	// Print feedback based on how close the guess is to the correct answer.
 	switch diff := math.Abs(aC - gC); {
 	case diff < 0.3:
 		fmt.Println("Astonishing!")
