@@ -73,8 +73,6 @@ func verboseDegreeConversion(v float64, fromScale string, toScale string) {
 		result = F2C(v)
 	}
 
-	// TODO: Mark guess and issue feedback.
-
 	// Print conversion result
 	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, result, toScale)
 }
@@ -84,8 +82,13 @@ func runGuess() {
 	// Define ranges for values to translate
 	Cmin, Cmax := -50.0, 50.0
 	Fmin, Fmax := -60.0, 120.0
+
+	// Intialize random seed and variables for the scales and values.
+	rand.Seed(time.Now().UnixNano())
 	var fromScale, toScale string
 	var val, ans float64
+
+	// Randomly choose the conversion direction and the value to convert.
 	switch rand.Intn(2) {
 	case 0:
 		fromScale, toScale = "C", "F"
@@ -97,6 +100,10 @@ func runGuess() {
 		val = randFloat(Fmin, Fmax)
 		ans = F2C(val)
 	}
+
+	// Obtain guess from user input.
+	// TODO: Use some kind of try-except clause to repeat query after invalid
+	// guesses.
 	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
 	reader := bufio.NewReader(os.Stdin)
 	guessStr, err := reader.ReadString('\n')
@@ -109,12 +116,15 @@ func runGuess() {
 		log.Fatal(err)
 	}
 	fmt.Println("Your guess:", guess)
+
+	// TODO: Mark guess and issue feedback.
+
+	// Print correct result of conversion.
 	fmt.Printf("%.3g\u00b0%s is equivalent to %.3g\u00b0%s.\n", val, fromScale, ans, toScale)
 }
 
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
 	if len(os.Args) == 1 {
 		// Default behaviour: run the app in repeated guess mode.
 		fmt.Println("Celsenheit guess mode: practice temperature conversions on random values!")
