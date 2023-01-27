@@ -93,16 +93,12 @@ func runGuess() {
 		ans = F2C(val)
 	}
 
-	// Attempt to read input string - repeat prompt if error occurs.
+	// Attempt to read input string and convert it to a float.
 	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
 	reader := bufio.NewReader(os.Stdin)
+
+	// Attempt to read input string from command line.
 	guessStr, readErr := reader.ReadString('\n')
-	for readErr != nil {
-		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
-		reader = bufio.NewReader(os.Stdin)
-		guessStr, readErr = reader.ReadString('\n')
-	}
-	guessStr = strings.TrimSpace(guessStr) // Remove \n from input string
 
 	// Quit session if user has typed "q", "Q", "quit" etc.
 	if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
@@ -110,22 +106,29 @@ func runGuess() {
 		os.Exit(0)
 	}
 
-	// Attempt to parse input string as float - repeat prompt and re-read if
-	// error occurs.
+	// Attempt to convert input string to float.
+	guessStr = strings.TrimSpace(guessStr) // (Remove \n)
 	guess, convErr := strconv.ParseFloat(guessStr, 64)
-	for convErr != nil {
+
+	// Repeat the prompt and start again if there was an error reading or
+	// processing in the lines above. 
+	for readErr != nil || convErr != nil {
 		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
-		reader = bufio.NewReader(os.Stdin)
+		reader := bufio.NewReader(os.Stdin)
+
+		// Attempt to read input string from command line.
 		guessStr, readErr = reader.ReadString('\n')
-		for readErr != nil {
-			fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
-			reader = bufio.NewReader(os.Stdin)
-			guessStr, readErr = reader.ReadString('\n')
+
+		// Quit session if user has typed "q", "Q", "quit" etc.
+		if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
+			fmt.Println("Exiting.")
+			os.Exit(0)
 		}
-		guessStr = strings.TrimSpace(guessStr) // Remove \n
+
+		// Attempt to convert input string to float.
+		guessStr = strings.TrimSpace(guessStr) // (Remove \n)
 		guess, convErr = strconv.ParseFloat(guessStr, 64)
 	}
-
 
 	// Mark guess and issue feedback.
 	judgeGuess(guess, ans, toScale)
