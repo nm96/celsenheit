@@ -178,6 +178,8 @@ func main() {
 		fmt.Println("Celsenheit guess mode: practice mental conversion of temperature values")
 		fmt.Println("=======================================================================")
 		fmt.Println()
+		fmt.Println("Enter 'Q' to exit.")
+		fmt.Println()
 
 		// Run runGuess function repeatedly.
 		for {
