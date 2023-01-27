@@ -143,23 +143,26 @@ func judgeGuess(guess, ans float64, toScale string) {
 		aC = F2C(ans)
 	}
 
-	// Print feedback based on how close the guess is to the correct answer.
-	switch diff := math.Abs(aC - gC); {
-	case diff < 0.3:
-		fmt.Println("Astonishing!")
-		fmt.Println("*****")
-	case diff < 1.0:
-		fmt.Println("Very close!")
-		fmt.Println("****")
-	case diff < 3.0:
-		fmt.Println("Pretty close!")
-		fmt.Println("***")
-	case diff < 10.0:
-		fmt.Println("In the ballpark!")
-		fmt.Println("**")
-	default:
-		fmt.Println("Better luck next time!")
-		fmt.Println("*")
+	// Initialise slice with thresholds and associated feedback messages for
+	// judging guesses. len(messages) should always equal len(threholds) + 1.
+	thresholds := []float64{0.3,
+						   1.0,
+						   3.0,
+						   10.0}
+	messages := []string{"Astonishing!",
+						 "Very close!",
+						 "Pretty close!",
+						 "In the ballpark!",
+						 "Better luck next time!"}
+
+	// Iterate through thresholds and give feedback based on how close the guess
+	// is to the correct answer.
+	gap := math.Abs(aC - gC)
+	for i := 0; i < len(thresholds) + 1; i++ {
+		if i == len(thresholds) || gap < thresholds[i] {
+			fmt.Println(messages[i])
+			break
+		}
 	}
 }
 
