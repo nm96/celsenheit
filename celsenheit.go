@@ -19,7 +19,6 @@ var usage string =
 e.g. : celsenheit 20.0 C F`
 
 
-
 // F2C converts a temperature value from Fahrenheit to Celsius. 
 func F2C(fahrenheit float64) float64 {
 	return (fahrenheit - 32.0) / 1.8
