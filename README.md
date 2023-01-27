@@ -1,8 +1,8 @@
 # celsenheit
 
-Celsenheit is both a very simple tool for converting temperature values between
-Celsius and Fahrenheit, and an interactive app for practicing mental degree
-conversions.
+`celsenheit` is both a very simple tool for converting temperature values
+between Celsius and Fahrenheit, and an interactive app for practicing mental
+temperature conversion.
 
 ## Conversion mode
 
