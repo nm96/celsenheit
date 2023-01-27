@@ -30,8 +30,8 @@ func randFloat(min, max float64) float64 {
 }
 
 
-// Contains returns true if a given string slice contains a given string.
-func Contains(list []string, element string) bool {
+// containsStr returns true if a given string slice contains a given string.
+func containsStr(list []string, element string) bool {
 	for _, s := range list {
 		if s == element {
 			return true
@@ -48,7 +48,7 @@ func verboseDegreeConversion(v float64, fromScale string, toScale string) {
 	scales := []string{"F","C"}
 
 	// Check that input temperature scales are valid.
-	if !Contains(scales, fromScale) || !Contains(scales, toScale) || fromScale == toScale {
+	if !containsStr(scales, fromScale) || !containsStr(scales, toScale) || fromScale == toScale {
 		fmt.Printf("Invalid conversion %s->%s: Only F->C and C->F are currently supported.\n",
 		fromScale, toScale)
 		return
@@ -136,11 +136,10 @@ func runGuess() {
 
 
 func judgeGuess(guess, ans float64, toScale string) {
-	// Convert guess and ans values to degrees C.
-	gC, aC := guess, ans
+	// Convert guess and ans values to degrees C if necessary for consistency.
 	if toScale == "F" {
-		gC = F2C(guess)
-		aC = F2C(ans)
+		guess = F2C(guess)
+		ans = F2C(ans)
 	}
 
 	// Initialise slice with thresholds and associated feedback messages for
@@ -157,10 +156,10 @@ func judgeGuess(guess, ans float64, toScale string) {
 
 	// Iterate through thresholds and give feedback based on how close the guess
 	// is to the correct answer.
-	gap := math.Abs(aC - gC)
+	gap := math.Abs(ans - guess)
 	for i := 0; i < len(thresholds) + 1; i++ {
 		if i == len(thresholds) || gap < thresholds[i] {
-			fmt.Println(messages[i])
+			fmt.Printf("%s You were off by %.4g\u00b0C: ", messages[i], gap)
 			break
 		}
 	}

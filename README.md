@@ -32,17 +32,15 @@ $ celsenheit
 Celsenheit guess mode: practice mental conversion of temperature values
 =======================================================================
 
-Convert 23.4°C to °F:
+Convert 17.9°C to °F: 
 ```
 
 You are given randomly chosen values to convert from °C to °F or vice-versa,
 and issued feedback based on how close your guess was:
 
 ```
-Convert 23.4°C to °F: 73
-Very close!
-****
-23.4°C is equivalent to 74.2°F.
+Convert 17.9°C to °F: 65
+Very close! You were off by 0.4232°C: 17.9°C is equivalent to 64.2°F.
 ```
 
 Guess mode repeats infinitely until the user quits by typing `Q` (or `q`,
