@@ -99,7 +99,7 @@ func runGuess() {
 		ans = F2C(val)
 	}
 
-	// Obtain guess from user input.
+	// Attempt to read input string - repeat prompt if error occurs.
 	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
 	reader := bufio.NewReader(os.Stdin)
 	guessStr, readErr := reader.ReadString('\n')
@@ -108,7 +108,16 @@ func runGuess() {
 		reader = bufio.NewReader(os.Stdin)
 		guessStr, readErr = reader.ReadString('\n')
 	}
-	guessStr = strings.TrimSpace(guessStr) // Remove \n
+	guessStr = strings.TrimSpace(guessStr) // Remove \n from input string
+
+	// Quit session if user types "q", "Q", "quit" etc.
+	if strings.ToUpper(guessStr[:1]) == "Q" {
+		fmt.Println("Exiting.")
+		os.Exit(0)
+	}
+
+	// Attempt to parse input string as float - repeat prompt and re-read if
+	// error occurs.
 	guess, convErr := strconv.ParseFloat(guessStr, 64)
 	for convErr != nil {
 		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
@@ -122,7 +131,7 @@ func runGuess() {
 		guessStr = strings.TrimSpace(guessStr) // Remove \n
 		guess, convErr = strconv.ParseFloat(guessStr, 64)
 	}
-	fmt.Println("Your guess:", guess)
+
 
 	// Mark guess and issue feedback.
 	judgeGuess(guess, ans, toScale)
@@ -167,8 +176,8 @@ func main() {
 
 		// Initialise random seed and print intro banner.
 		rand.Seed(time.Now().UnixNano())
-		fmt.Println("Celsenheit guess mode: practice temperature conversions on random values!")
-		fmt.Println("=========================================================================")
+		fmt.Println("Celsenheit guess mode: practice mental conversion of temperature values")
+		fmt.Println("=======================================================================")
 		fmt.Println()
 
 		// Run runGuess function repeatedly.

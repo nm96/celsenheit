@@ -44,3 +44,6 @@ Astonishing!
 *****
 -37.4°C is equivalent to -35.4°F.
 ```
+
+Guess mode repeats infinitely until the user quits by typing `Q` (or `q`,
+`quit` etc. - anything beginning with q.) 
