@@ -19,6 +19,8 @@ Converting 20.0°C to °F:
 
 The degree scale input is normalized to its capitalized first letter, so
 `celsenheit 20.0 c f` and `celsenheit 20.0 celsius fahrenheit` are also valid.
+Temperature values can be written with or without a decimal point but must be
+numerical.
 
 ## Guess mode
 
