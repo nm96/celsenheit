@@ -84,8 +84,7 @@ func runGuess() {
 	Cmin, Cmax := -50.0, 50.0
 	Fmin, Fmax := -60.0, 120.0
 
-	// Intialize random seed and variables for the scales and values.
-	rand.Seed(time.Now().UnixNano())
+	// Intialize variables for the scales and values.
 	var fromScale, toScale string
 	var val, ans float64
 
@@ -158,9 +157,14 @@ func judgeGuess(guess, ans float64, toScale string) {
 func main() {
 	if len(os.Args) == 1 {
 		// Default behaviour: run the app in repeated guess mode.
+
+		// Initialise random seed and print intro banner.
+		rand.Seed(time.Now().UnixNano())
 		fmt.Println("Celsenheit guess mode: practice temperature conversions on random values!")
 		fmt.Println("=========================================================================")
 		fmt.Println()
+
+		// Run runGuess function repeatedly.
 		for {
 			runGuess()
 			fmt.Println()
