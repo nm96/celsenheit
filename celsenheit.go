@@ -8,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"time"
-	"log"
 	"strings"
 )
 
@@ -101,18 +100,27 @@ func runGuess() {
 	}
 
 	// Obtain guess from user input.
-	// TODO: Use some kind of try-except clause to repeat query after invalid
-	// guesses.
 	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
 	reader := bufio.NewReader(os.Stdin)
-	guessStr, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
+	guessStr, readErr := reader.ReadString('\n')
+	for readErr != nil {
+		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
+		reader = bufio.NewReader(os.Stdin)
+		guessStr, readErr = reader.ReadString('\n')
 	}
 	guessStr = strings.TrimSpace(guessStr) // Remove \n
-	guess, err := strconv.ParseFloat(guessStr, 64)
-	if err != nil {
-		log.Fatal(err)
+	guess, convErr := strconv.ParseFloat(guessStr, 64)
+	for convErr != nil {
+		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
+		reader = bufio.NewReader(os.Stdin)
+		guessStr, readErr = reader.ReadString('\n')
+		for readErr != nil {
+			fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
+			reader = bufio.NewReader(os.Stdin)
+			guessStr, readErr = reader.ReadString('\n')
+		}
+		guessStr = strings.TrimSpace(guessStr) // Remove \n
+		guess, convErr = strconv.ParseFloat(guessStr, 64)
 	}
 	fmt.Println("Your guess:", guess)
 
