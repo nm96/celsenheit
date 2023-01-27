@@ -3,19 +3,13 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"os"
+	"time"
 	"bufio"
 	"math"
 	"math/rand"
-	"time"
-	"strings"
 )
-
-
-// Define usage help message.
-var usage string =
-`Usage: celsenheit degree_value convert_from convert_to
-e.g. : celsenheit 20.0 C F`
 
 
 // F2C converts a temperature value from Fahrenheit to Celsius. 
@@ -30,7 +24,7 @@ func C2F(celsius float64) float64 {
 }
 
 
-// randFloat generates a random floating point number in the interval [max, min]
+// randFloat generates a random floating point number in the interval [min, max]
 func randFloat(min, max float64) float64 {
 	return min + rand.Float64() * (max - min)
 }
@@ -111,7 +105,7 @@ func runGuess() {
 	guessStr = strings.TrimSpace(guessStr) // Remove \n from input string
 
 	// Quit session if user has typed "q", "Q", "quit" etc.
-	if strings.ToUpper(guessStr[:1]) == "Q" {
+	if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
 		fmt.Println("Exiting.")
 		os.Exit(0)
 	}
@@ -161,10 +155,10 @@ func judgeGuess(guess, ans float64, toScale string) {
 		fmt.Println("Pretty close!")
 		fmt.Println("***")
 	case diff < 10.0:
-		fmt.Println("In the ballpark..")
+		fmt.Println("In the ballpark!")
 		fmt.Println("**")
 	default:
-		fmt.Println("Better luck next try..")
+		fmt.Println("Better luck next time!")
 		fmt.Println("*")
 	}
 }
@@ -208,7 +202,9 @@ func main() {
 		return
 	} else {
 		fmt.Println("Command-line arguments not understood.")
-		fmt.Println(usage)
+		fmt.Println(
+			`Usage: celsenheit degree_value convert_from convert_to
+			e.g. : celsenheit 20.0 C F`)
 		return
 	}
 
