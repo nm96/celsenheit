@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"os"
 	"bufio"
+	"math"
 	"math/rand"
 	"time"
 	"log"
@@ -117,10 +118,39 @@ func runGuess() {
 	}
 	fmt.Println("Your guess:", guess)
 
-	// TODO: Mark guess and issue feedback.
+	// Mark guess and issue feedback.
+	judgeGuess(guess, ans, toScale)
 
 	// Print correct result of conversion.
 	fmt.Printf("%.3g\u00b0%s is equivalent to %.3g\u00b0%s.\n", val, fromScale, ans, toScale)
+}
+
+
+func judgeGuess(guess, ans float64, toScale string) {
+	// Convert guess and ans values to degrees C.
+	gC, aC := guess, ans
+	if toScale == "F" {
+		gC = F2C(guess)
+		aC = F2C(ans)
+	}
+
+	switch diff := math.Abs(aC - gC); {
+	case diff < 0.3:
+		fmt.Println("Astonishing!")
+		fmt.Println("*****")
+	case diff < 1.0:
+		fmt.Println("Very close!")
+		fmt.Println("****")
+	case diff < 3.0:
+		fmt.Println("Pretty close!")
+		fmt.Println("***")
+	case diff < 10.0:
+		fmt.Println("In the ballpark..")
+		fmt.Println("**")
+	default:
+		fmt.Println("Better luck next try..")
+		fmt.Println("*")
+	}
 }
 
 
