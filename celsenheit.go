@@ -116,6 +116,7 @@ func runGuess() {
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	if len(os.Args) == 1 {
+		// Default behaviour: run the app in repeated guess mode.
 		fmt.Println("Celsenheit guess mode: practice temperature conversions on random values!")
 		fmt.Println("=========================================================================")
 		fmt.Println()
@@ -124,26 +125,30 @@ func main() {
 			fmt.Println()
 		}
 		return
-	}
-	if len(os.Args) < 4 {
-		fmt.Println("Not enough command line arguments.")
+	} else if len(os.Args) == 4 {
+		// If given the right inputs, run app as a converter tool.
+
+		// Take temperature scale strings from command line, normalizing to the
+		// capitalized first letter of the string, e.g. celsius -> C.
+		fromScale := strings.ToUpper(os.Args[2][:1])
+		toScale := strings.ToUpper(os.Args[3][:1])
+
+		// Take input temperature value string from command line and convert to
+		// float if possible.
+		valueString := os.Args[1]
+		v, err := strconv.ParseFloat(valueString, 64)
+		if err != nil {
+			fmt.Printf("Input error: cannot convert %s to a temperature value.\n", valueString)
+			return
+		}
+
+		// Run the verbose degree conversion with these sanitized inputs.
+		verboseDegreeConversion(v, fromScale, toScale)
+		return
+	} else {
+		fmt.Println("Command-line arguments not understood.")
 		fmt.Println(usage)
 		return
-	} else if len(os.Args) > 4 {
-		fmt.Println("Too many command line arguments.")
-		fmt.Println(usage)
-		return
 	}
 
-	valueString := os.Args[1]
-	fromScale := os.Args[2]
-	toScale := os.Args[3]
-
-	// Convert input value from string to float if possible, or print error.
-	v, err := strconv.ParseFloat(valueString, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	verboseDegreeConversion(v, fromScale, toScale)
 }
