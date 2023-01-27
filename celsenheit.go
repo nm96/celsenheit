@@ -11,9 +11,12 @@ import (
 	"strings"
 )
 
+
+// Define usage help message.
 var usage string =
 `Usage: celsenheit degree_value convert_from convert_to
 e.g. : celsenheit 20.0 C F`
+
 
 
 // F2C converts a temperature value from Fahrenheit to Celsius. 
@@ -28,43 +31,52 @@ func C2F(celsius float64) float64 {
 }
 
 
-// printDegreeConversion verbosely outputs the results of a degree conversion
-// (either F->C or C->F) to the command line.
-func printDegreeConversion(s string, fromScale string, toScale string) {
+// randFloat generates a random floating point number in the interval [max, min]
+func randFloat(min, max float64) float64 {
+	return min + rand.Float64() * (max - min)
+}
 
-	// Check that temperature scales are valid.
-	if (toScale != "C") && (toScale != "F") {
-		fmt.Println(toScale, "is not a valid temperature scale to convert to.")
-		return
+
+// Contains returns true if a given string slice contains a given string.
+func Contains(list []string, element string) bool {
+	for _, s := range list {
+		if s == element {
+			return true
+		}
 	}
-	if (fromScale != "C") && (fromScale != "F") {
-		fmt.Println(fromScale, "is not a valid temperature scale to convert from.")
+	return false
+}
+
+
+// verboseDegreeConversion verbosely outputs the results of a degree conversion
+// (either F->C or C->F) to the command line.
+func verboseDegreeConversion(v float64, fromScale string, toScale string) {
+	// Define list of supported temperature scales
+	scales := []string{"F","C"}
+
+	// Check that input temperature scales are valid.
+	if !Contains(scales, fromScale) || !Contains(scales, toScale) || fromScale == toScale {
+		fmt.Printf("Invalid conversion %s->%s: Only F->C and C->F are currently supported.\n",
+		fromScale, toScale)
 		return
 	}
 
 	// Print the conversion about to be performed.
-	fmt.Printf("Converting %s\u00b0%s to \u00b0%s:\n", s, fromScale, toScale)
+	fmt.Printf("Converting %g\u00b0%s to \u00b0%s:\n", v, fromScale, toScale)
 
-	// Convert input value from string to float if possible, or print error.
-	v, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Convert value and print result.
-	var r float64 // Conversion result variable
+	// Convert value using the specified conversion function.
+	var result float64
 	switch fromScale {
 	case "C":
-		r = C2F(v)
+		result = C2F(v)
 	case "F":
-		r = F2C(v)
+		result = F2C(v)
 	}
-	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, r, toScale)
-}
 
+	// TODO: Mark guess and issue feedback.
 
-func randFloat(min, max float64) float64 {
-	return min + rand.Float64() * (max - min)
+	// Print conversion result
+	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, result, toScale)
 }
 
 
@@ -121,13 +133,17 @@ func main() {
 		fmt.Println("Too many command line arguments.")
 		fmt.Println(usage)
 		return
-	} else if os.Args[2] == os.Args[3] {
-		fmt.Println("Temperature scales must be different.")
-		fmt.Println(usage)
-		return
 	}
+
 	valueString := os.Args[1]
 	fromScale := os.Args[2]
 	toScale := os.Args[3]
-	printDegreeConversion(valueString, fromScale, toScale)
+
+	// Convert input value from string to float if possible, or print error.
+	v, err := strconv.ParseFloat(valueString, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	verboseDegreeConversion(v, fromScale, toScale)
 }
