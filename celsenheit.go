@@ -227,7 +227,11 @@ Enter 'Q' to exit.
 		}
 
 		// Run the verbose degree conversion with these sanitized inputs.
-		fmt.Print(verboseDegreeConversion(v, fromScale, toScale))
+		resStr, err := verboseDegreeConversion(v, fromScale, toScale)
+		if err != nil {
+			fmt.Print(err)
+		}
+		fmt.Print(resStr)
 		return
 	} else {
 		fmt.Println("Command-line arguments not understood.")
