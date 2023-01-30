@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"errors"
 	"strconv"
 	"strings"
 	"os"
@@ -43,19 +44,15 @@ func containsStr(list []string, element string) bool {
 
 // verboseDegreeConversion verbosely outputs the results of a degree conversion
 // (either F->C or C->F) to the command line.
-func verboseDegreeConversion(v float64, fromScale string, toScale string) {
+func verboseDegreeConversion(v float64, fromScale string, toScale string) (string, error) {
 	// Define list of supported temperature scales
 	scales := []string{"F","C"}
 
 	// Check that input temperature scales are valid.
 	if !containsStr(scales, fromScale) || !containsStr(scales, toScale) || fromScale == toScale {
-		fmt.Printf("Invalid conversion %s->%s: Only F->C and C->F are currently supported.\n",
-		fromScale, toScale)
-		return
+		errMsg := fmt.Sprintf("Invalid conversion %s->%s: Only F->C and C->F are currently supported.\n", fromScale, toScale)
+		return "", errors.New(errMsg)
 	}
-
-	// Print the conversion about to be performed.
-	fmt.Printf("Converting %g\u00b0%s to \u00b0%s:\n", v, fromScale, toScale)
 
 	// Convert value using the specified conversion function.
 	var result float64
@@ -67,7 +64,9 @@ func verboseDegreeConversion(v float64, fromScale string, toScale string) {
 	}
 
 	// Print conversion result
-	fmt.Printf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n", v, fromScale, result, toScale)
+	resultMessage := fmt.Sprintf("%g\u00b0%s is equivalent to %.3g\u00b0%s.\n",
+	v, fromScale, result, toScale)
+	return resultMessage, nil
 }
 
 
@@ -175,11 +174,15 @@ func main() {
 
 		// Initialise random seed and print intro banner.
 		rand.Seed(time.Now().UnixNano())
-		fmt.Println("Celsenheit guess mode: practice mental conversion of temperature values")
-		fmt.Println("=======================================================================")
-		fmt.Println()
-		fmt.Println("Enter 'Q' to exit.")
-		fmt.Println()
+		introMsg :=
+`
+Celsenheit guess mode: practice mental conversion of temperature values
+=======================================================================
+
+Enter 'Q' to exit.
+
+`
+		fmt.Print(introMsg)
 
 		// Run runGuess function repeatedly.
 		for {
@@ -205,7 +208,7 @@ func main() {
 		}
 
 		// Run the verbose degree conversion with these sanitized inputs.
-		verboseDegreeConversion(v, fromScale, toScale)
+		fmt.Print(verboseDegreeConversion(v, fromScale, toScale))
 		return
 	} else {
 		fmt.Println("Command-line arguments not understood.")

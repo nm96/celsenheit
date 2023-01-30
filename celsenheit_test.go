@@ -62,4 +62,10 @@ func TestRunGuess(t *testing.T) {
 }
 
 
+func TestJudgeGuess(t *testing.T) {
+}
+
+
+func TestMain(t *testing.T) {
+}
 
