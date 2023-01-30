@@ -136,6 +136,9 @@ func GetGuess(Q_p *Question) error {
 }
 
 
+// JudgeGuess takes a question where the answer has been (presumable) guessed,
+// and returns a string giving feedback about how close the guess was and what
+// the correct answer is.
 func JudgeGuess(Q Question) string {
 	var guess, ans float64
 	if Q.toScale == "F" {
@@ -173,6 +176,8 @@ func JudgeGuess(Q Question) string {
 }
 
 
+// RunGuess combines the three functions above to create and issue a question
+// and mark the result, which is printed to the console.
 func RunGuess() {
 	// Define parameters and create new question.
 	Cmin, Cmax := -50.0, 50.0
