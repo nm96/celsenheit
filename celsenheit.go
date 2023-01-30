@@ -25,14 +25,14 @@ func C2F(celsius float64) float64 {
 }
 
 
-// randFloat generates a random floating point number in the interval [min, max]
-func randFloat(min, max float64) float64 {
+// RandFloat generates a random floating point number in the interval [min, max]
+func RandFloat(min, max float64) float64 {
 	return min + rand.Float64() * (max - min)
 }
 
 
-// containsStr returns true if a given string slice contains a given string.
-func containsStr(list []string, element string) bool {
+// ContainsStr returns true if a given string slice contains a given string.
+func ContainsStr(list []string, element string) bool {
 	for _, s := range list {
 		if s == element {
 			return true
@@ -42,14 +42,14 @@ func containsStr(list []string, element string) bool {
 }
 
 
-// verboseDegreeConversion verbosely outputs the results of a degree conversion
+// VerboseDegreeConversion verbosely outputs the results of a degree conversion
 // (either F->C or C->F) to the command line.
-func verboseDegreeConversion(v float64, fromScale string, toScale string) (string, error) {
+func VerboseDegreeConversion(v float64, fromScale string, toScale string) (string, error) {
 	// Define list of supported temperature scales
 	scales := []string{"F","C"}
 
 	// Check that input temperature scales are valid.
-	if !containsStr(scales, fromScale) || !containsStr(scales, toScale) || fromScale == toScale {
+	if !ContainsStr(scales, fromScale) || !ContainsStr(scales, toScale) || fromScale == toScale {
 		errMsg := fmt.Sprintf("Invalid conversion %s->%s: Only F->C and C->F are currently supported.\n", fromScale, toScale)
 		return "", errors.New(errMsg)
 	}
@@ -81,9 +81,9 @@ type Question struct {
 }
 
 
-// newQuestion randomly generates a conversion question, computes the required
+// NewQuestion randomly generates a conversion question, computes the required
 // result and returns this information in a Question struct.
-func newQuestion(Cmin, Cmax float64) Question {
+func NewQuestion(Cmin, Cmax float64) Question {
 	// Intialize variables for the scales and values.
 	var fromScale, toScale string
 	var val, ans float64
@@ -92,12 +92,12 @@ func newQuestion(Cmin, Cmax float64) Question {
 	switch rand.Intn(2) {
 	case 0:
 		fromScale, toScale = "C", "F"
-		val = randFloat(Cmin, Cmax)
+		val = RandFloat(Cmin, Cmax)
 		ans = C2F(val)
 
 	case 1:
 		fromScale, toScale = "F", "C"
-		val = randFloat(C2F(Cmin), C2F(Cmax))
+		val = RandFloat(C2F(Cmin), C2F(Cmax))
 		ans = F2C(val)
 	}
 	return Question{fromScale, toScale, val, ans, 0}
@@ -136,7 +136,7 @@ func GetGuess(Q_p *Question) error {
 }
 
 
-func judgeGuess(Q Question) string {
+func JudgeGuess(Q Question) string {
 	var guess, ans float64
 	if Q.toScale == "F" {
 		guess = F2C(Q.guess)
@@ -173,17 +173,17 @@ func judgeGuess(Q Question) string {
 }
 
 
-func runGuess() {
+func RunGuess() {
 	// Define parameters and create new question.
 	Cmin, Cmax := -50.0, 50.0
-	Q := newQuestion(Cmin, Cmax)
+	Q := NewQuestion(Cmin, Cmax)
 	// Get guess from command line, and keep repeating if guess is invalid.
 	guessErr := GetGuess(&Q)
 	for guessErr != nil {
 		guessErr = GetGuess(&Q)
 	}
 	// Print feedback and correct answer.
-	fmt.Print(judgeGuess(Q))
+	fmt.Print(JudgeGuess(Q))
 }
 
 
@@ -203,9 +203,9 @@ Enter 'Q' to exit.
 `
 		fmt.Print(introMsg)
 
-		// Run runGuess function repeatedly.
+		// Run RunGuess function repeatedly.
 		for {
-			runGuess()
+			RunGuess()
 			fmt.Println()
 		}
 		return
@@ -227,7 +227,7 @@ Enter 'Q' to exit.
 		}
 
 		// Run the verbose degree conversion with these sanitized inputs.
-		resStr, err := verboseDegreeConversion(v, fromScale, toScale)
+		resStr, err := VerboseDegreeConversion(v, fromScale, toScale)
 		if err != nil {
 			fmt.Print(err)
 		}

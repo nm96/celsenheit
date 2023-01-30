@@ -30,7 +30,7 @@ func TestC2F(t *testing.T) {
 
 func TestRandFloat(t *testing.T) {
 	min, max := 7.0, 11.0
-	val := randFloat(min, max)
+	val := RandFloat(min, max)
 	if (val < min) || (val > max) {
 		t.Fatalf("Expected a value between %v and %v, got %v", min, max, val)
 	}
@@ -40,14 +40,14 @@ func TestRandFloat(t *testing.T) {
 func TestContainsStr(t *testing.T) {
 	slice := []string{"foo", "bar", "baz"}
 	// Test with a string that is in the slice.
-	containsFoo := containsStr(slice, "foo")
+	containsFoo := ContainsStr(slice, "foo")
 	if containsFoo != true {
-		t.Fatalf("containsStr(slice, 'foo') = false, expected true")
+		t.Fatalf("ContainsStr(slice, 'foo') = false, expected true")
 	}
 	// Test with a string that is not in the slice.
-	containsQux := containsStr(slice, "qux")
+	containsQux := ContainsStr(slice, "qux")
 	if containsQux != false {
-		t.Fatalf("containsStr(slice, 'qux') = true, expected false")
+		t.Fatalf("ContainsStr(slice, 'qux') = true, expected false")
 	}
 }
 
