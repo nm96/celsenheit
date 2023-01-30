@@ -6,7 +6,6 @@ import (
 )
 
 
-// TestF2C tests conversion from Fahrenheit to Celsius. 
 func TestF2C(t *testing.T) {
 	Fval := 33.8
 	Cval := F2C(Fval)
@@ -16,11 +15,28 @@ func TestF2C(t *testing.T) {
 		t.Fatalf("F2C(%v) = %v, expected %v", Fval, Cval, Crequired)
 	}
 }
-// (Testing F2C explicitly as above is probably not necessary, as it will be
-// covered when testing some of the larger functions.)
 
 
-// TestContainsStr tests the homemade slice contains checker containsStr()
+func TestC2F(t *testing.T) {
+	Cval := 0.0
+	Fval := C2F(Cval)
+	Frequired := 32.0
+	// Compare with a tolerance of 10^-10 as we are working with floats.
+	if math.Abs(Fval - Frequired) > 1e-10 {
+		t.Fatalf("F2C(%v) = %v, expected %v", Cval, Fval, Frequired)
+	}
+}
+
+
+func TestRandFloat(t *testing.T) {
+	min, max := 7.0, 11.0
+	val := randFloat(min, max)
+	if (val < min) || (val > max) {
+		t.Fatalf("Expected a value between %v and %v, got %v", min, max, val)
+	}
+}
+
+
 func TestContainsStr(t *testing.T) {
 	slice := []string{"foo", "bar", "baz"}
 	// Test with a string that is in the slice.
@@ -34,3 +50,16 @@ func TestContainsStr(t *testing.T) {
 		t.Fatalf("containsStr(slice, 'qux') = true, expected false")
 	}
 }
+
+
+func TestVerboseDegreeConversion(t *testing.T) {
+	// Test for a valid conversion.
+	// Test in the case of an invalid input scale pair.
+}
+
+
+func TestRunGuess(t *testing.T) {
+}
+
+
+
