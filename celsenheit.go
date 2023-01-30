@@ -70,11 +70,20 @@ func verboseDegreeConversion(v float64, fromScale string, toScale string) (strin
 }
 
 
-func runGuess() {
-	// Define ranges for values to translate
-	Cmin, Cmax := -50.0, 50.0
-	Fmin, Fmax := -60.0, 120.0
+// Define a new struct which holds all the information necessary to present and
+// mark a question.
+type Question struct {
+	fromScale string
+	toScale string
+	val float64
+	ans float64
+	guess float64
+}
 
+
+// newQuestion randomly generates a conversion question, computes the required
+// result and returns this information in a Question struct.
+func newQuestion(Cmin, Cmax float64) Question {
 	// Intialize variables for the scales and values.
 	var fromScale, toScale string
 	var val, ans float64
@@ -88,16 +97,26 @@ func runGuess() {
 
 	case 1:
 		fromScale, toScale = "F", "C"
-		val = randFloat(Fmin, Fmax)
+		val = randFloat(C2F(Cmin), C2F(Cmax))
 		ans = F2C(val)
 	}
+	return Question{fromScale, toScale, val, ans, 0}
+}
 
+
+// GetGuess issues a question, gets a response from the command line and
+// attempts to convert that to a guess value which is added to the Question
+// struct, ready for marking.
+func GetGuess(Q_p *Question) error {
 	// Attempt to read input string and convert it to a float.
-	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
+	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", Q_p.val, Q_p.fromScale, Q_p.toScale)
 	reader := bufio.NewReader(os.Stdin)
 
 	// Attempt to read input string from command line.
 	guessStr, readErr := reader.ReadString('\n')
+	if readErr != nil {
+		return readErr
+	}
 
 	// Quit session if user has typed "q", "Q", "quit" etc.
 	if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
@@ -108,44 +127,25 @@ func runGuess() {
 	// Attempt to convert input string to float.
 	guessStr = strings.TrimSpace(guessStr) // (Remove \n)
 	guess, convErr := strconv.ParseFloat(guessStr, 64)
-
-	// Repeat the prompt and start again if there was an error reading or
-	// processing in the lines above. 
-	for readErr != nil || convErr != nil {
-		fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", val, fromScale, toScale)
-		reader := bufio.NewReader(os.Stdin)
-
-		// Attempt to read input string from command line.
-		guessStr, readErr = reader.ReadString('\n')
-
-		// Quit session if user has typed "q", "Q", "quit" etc.
-		if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
-			fmt.Println("Exiting.")
-			os.Exit(0)
-		}
-
-		// Attempt to convert input string to float.
-		guessStr = strings.TrimSpace(guessStr) // (Remove \n)
-		guess, convErr = strconv.ParseFloat(guessStr, 64)
+	if convErr != nil {
+		return convErr
 	}
 
-	// Mark guess and issue feedback.
-	judgeGuess(guess, ans, toScale)
-
-	// Print correct result of conversion.
-	fmt.Printf("%.3g\u00b0%s is equivalent to %.3g\u00b0%s.\n", val, fromScale, ans, toScale)
+	Q_p.guess = guess
+	return nil
 }
 
 
-func judgeGuess(guess, ans float64, toScale string) {
-	// Convert guess and ans values to degrees C if necessary for consistency.
-	if toScale == "F" {
-		guess = F2C(guess)
-		ans = F2C(ans)
+func judgeGuess(Q Question) string {
+	var guess, ans float64
+	if Q.toScale == "F" {
+		guess = F2C(Q.guess)
+		ans = F2C(Q.ans)
+	} else {
+		guess = Q.guess
+		ans = Q.ans
 	}
 
-	// Initialise slice with thresholds and associated feedback messages for
-	// judging guesses. len(messages) should always equal len(threholds) + 1.
 	thresholds := []float64{0.3,
 						   1.0,
 						   3.0,
@@ -158,13 +158,32 @@ func judgeGuess(guess, ans float64, toScale string) {
 
 	// Iterate through thresholds and give feedback based on how close the guess
 	// is to the correct answer.
+	resMsg := ""
 	gap := math.Abs(ans - guess)
 	for i := 0; i < len(thresholds) + 1; i++ {
 		if i == len(thresholds) || gap < thresholds[i] {
-			fmt.Printf("%s You were off by %.4g\u00b0C: ", messages[i], gap)
+			resMsg += messages[i]
+			resMsg += fmt.Sprintf(" You were off by %.4g\u00b0C: ", gap)
 			break
 		}
 	}
+	resMsg += fmt.Sprintf("%.3g\u00b0%s is equivalent to %.3g\u00b0%s.\n",
+	Q.val, Q.fromScale, Q.ans, Q.toScale)
+	return resMsg
+}
+
+
+func runGuess() {
+	// Define parameters and create new question.
+	Cmin, Cmax := -50.0, 50.0
+	Q := newQuestion(Cmin, Cmax)
+	// Get guess from command line, and keep repeating if guess is invalid.
+	guessErr := GetGuess(&Q)
+	for guessErr != nil {
+		guessErr = GetGuess(&Q)
+	}
+	// Print feedback and correct answer.
+	fmt.Print(judgeGuess(Q))
 }
 
 
