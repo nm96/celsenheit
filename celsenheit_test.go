@@ -53,8 +53,33 @@ func TestContainsStr(t *testing.T) {
 
 
 func TestVerboseDegreeConversion(t *testing.T) {
-	// Test for a valid conversion.
+	// Test for a valid C -> F conversion.
+	msg, err := VerboseDegreeConversion(32.0, "C", "F")
+	if err != nil {
+		t.Fatal("Unexpected error:", err)
+	}
+	expectedMsg := "32°C is equivalent to 89.6°F.\n"
+	if msg != expectedMsg {
+		t.Fatalf("VerboseDegreeConversion(32.0, 'C', 'F') gives \n %s expected \n %s",
+		msg, expectedMsg)
+	}
+
+	// Test for a valid C -> F conversion.
+	msg, err = VerboseDegreeConversion(100.0, "F", "C")
+	if err != nil {
+		t.Fatal("Unexpected error:", err)
+	}
+	expectedMsg = "100°F is equivalent to 37.8°C.\n"
+	if msg != expectedMsg {
+		t.Fatalf("VerboseDegreeConversion(100.0, 'F', 'C') gives \n %s expected \n %s",
+		msg, expectedMsg)
+	}
+
 	// Test in the case of an invalid input scale pair.
+	_, err = VerboseDegreeConversion(1.0, "A", "B")
+	if err == nil {
+		t.Fatal("Expected error upon invalid degree conversion.")
+	}
 }
 
 
