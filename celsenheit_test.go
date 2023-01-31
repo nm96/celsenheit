@@ -3,7 +3,16 @@ package main
 import (
 	"testing"
 	"math"
+	"math/rand"
 )
+
+
+// floatEqual compares if two floating point values are equal up to some
+// tolerance value.
+func floatEqual(a, b, tol float64) bool {
+	return math.Abs(a - b) < tol
+}
+
 
 
 func TestF2C(t *testing.T) {
@@ -11,7 +20,7 @@ func TestF2C(t *testing.T) {
 	Cval := F2C(Fval)
 	Crequired := 1.0
 	// Compare with a tolerance of 10^-10 as we are working with floats.
-	if math.Abs(Cval - Crequired) > 1e-10 {
+	if !floatEqual(Cval, Crequired, 1e-10) {
 		t.Fatalf("F2C(%v) = %v, expected %v", Fval, Cval, Crequired)
 	}
 }
@@ -22,7 +31,7 @@ func TestC2F(t *testing.T) {
 	Fval := C2F(Cval)
 	Frequired := 32.0
 	// Compare with a tolerance of 10^-10 as we are working with floats.
-	if math.Abs(Fval - Frequired) > 1e-10 {
+	if !floatEqual(Fval, Frequired, 1e-10) {
 		t.Fatalf("F2C(%v) = %v, expected %v", Cval, Fval, Frequired)
 	}
 }
@@ -64,7 +73,7 @@ func TestVerboseDegreeConversion(t *testing.T) {
 		msg, expectedMsg)
 	}
 
-	// Test for a valid C -> F conversion.
+	// Test for a valid F -> C conversion.
 	msg, err = VerboseDegreeConversion(100.0, "F", "C")
 	if err != nil {
 		t.Fatal("Unexpected error:", err)
@@ -83,14 +92,44 @@ func TestVerboseDegreeConversion(t *testing.T) {
 }
 
 
+func TestNewQuestion(t *testing.T) {
+	Cmin, Cmax := -50.0, 50.0
+	Fmin, Fmax := C2F(Cmin), C2F(Cmax)
+	scales := []string{"C", "F"}
+	for i := int64(0); i < 5; i++ {
+		rand.Seed(i)
+		Q0 := NewQuestion(Cmin, Cmax)
+		if !ContainsStr(scales, Q0.fromScale) {
+			t.Fatal("Invalid fromScale, expected 'C' or 'F'.")
+		}
+		if !ContainsStr(scales, Q0.toScale) {
+			t.Fatal("Invalid toScale, expected 'C' or 'F'.")
+		}
+		if Q0.fromScale == "C" {
+			if (Q0.val < Cmin) || (Q0.val > Cmax) {
+				t.Fatal("Question value outside expected range.")
+			}
+			if !floatEqual(Q0.ans, C2F(Q0.val), 1e-10) {
+				t.Fatal("Question has incorrect ans value.")
+			}
+		} else {
+			if (Q0.val < Fmin) || (Q0.val > Fmax) {
+				t.Fatal("Question value outside expected range.")
+			}
+			if !floatEqual(Q0.ans, F2C(Q0.val), 1e-10) {
+				t.Fatal("Question has incorrect ans value.")
+			}
+		}
+		if Q0.guess != 0 {
+			t.Fatal("Guess value not initialized to zero.")
+		}
+	}
+}
+
+
 func TestRunGuess(t *testing.T) {
 }
 
 
 func TestJudgeGuess(t *testing.T) {
 }
-
-
-func TestMain(t *testing.T) {
-}
-
