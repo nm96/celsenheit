@@ -4,6 +4,8 @@ import (
 	"testing"
 	"math"
 	"math/rand"
+	"strings"
+	"bufio"
 )
 
 
@@ -127,7 +129,27 @@ func TestNewQuestion(t *testing.T) {
 }
 
 
-func TestRunGuess(t *testing.T) {
+func TestGetGuess(t *testing.T) {
+	// Test with valid guess
+	Q := NewQuestion(-50.0, 50.0)
+	guessStr := "10.0\n"
+	reader := bufio.NewReader(strings.NewReader(guessStr))
+	err := GetGuess(&Q, reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !floatEqual(Q.guess, 10.0, 1e-10) {
+		t.Fatalf("Guess string not processed correctly: got %v, expected %s", Q.guess, guessStr)
+	}
+
+	// Test with invalid guess
+	Q1 := NewQuestion(-50.0, 50.0)
+	guessStr1 := "£)(*)£)(QSDLKJSLDJ\n"
+	reader1 := bufio.NewReader(strings.NewReader(guessStr1))
+	err1 := GetGuess(&Q1, reader1)
+	if err1 == nil {
+		t.Fatal("Expected an error for an invalid guess string.")
+	}
 }
 
 
