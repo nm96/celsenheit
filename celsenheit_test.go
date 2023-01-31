@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"strings"
 	"bufio"
+	"fmt"
 )
 
 
@@ -134,6 +135,7 @@ func TestGetGuess(t *testing.T) {
 	Q := NewQuestion(-50.0, 50.0)
 	guessStr := "10.0\n"
 	reader := bufio.NewReader(strings.NewReader(guessStr))
+	// TODO: Prevent GetGuess from outputtng to consol while testing.
 	err := GetGuess(&Q, reader)
 	if err != nil {
 		t.Fatal(err)
@@ -154,4 +156,12 @@ func TestGetGuess(t *testing.T) {
 
 
 func TestJudgeGuess(t *testing.T) {
+	Q := NewQuestion(-10.0, 10.0)
+	guess := Q.ans + 2.0
+	guessStr := fmt.Sprintf("%f\n", guess)
+	reader := bufio.NewReader(strings.NewReader(guessStr))
+	GetGuess(&Q, reader)
+	resMsg := JudgeGuess(Q)
+	fmt.Print(resMsg)
+	// TODO: Test that resMsg contains (some of?) the expected words.
 }
