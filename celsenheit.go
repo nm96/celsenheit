@@ -107,10 +107,9 @@ func NewQuestion(Cmin, Cmax float64) Question {
 // GetGuess issues a question, gets a response from the command line and
 // attempts to convert that to a guess value which is added to the Question
 // struct, ready for marking.
-func GetGuess(Q_p *Question) error {
+func GetGuess(Q_p *Question, reader *bufio.Reader) error {
 	// Attempt to read input string and convert it to a float.
 	fmt.Printf("Convert %.3g\u00b0%s to \u00b0%s: ", Q_p.val, Q_p.fromScale, Q_p.toScale)
-	reader := bufio.NewReader(os.Stdin)
 
 	// Attempt to read input string from command line.
 	guessStr, readErr := reader.ReadString('\n')
@@ -178,14 +177,14 @@ func JudgeGuess(Q Question) string {
 
 // RunGuess combines the three functions above to create and issue a question
 // and mark the result, which is printed to the console.
-func RunGuess() {
+func RunGuess(reader *bufio.Reader) {
 	// Define parameters and create new question.
 	Cmin, Cmax := -50.0, 50.0
 	Q := NewQuestion(Cmin, Cmax)
 	// Get guess from command line, and keep repeating if guess is invalid.
-	guessErr := GetGuess(&Q)
+	guessErr := GetGuess(&Q, reader)
 	for guessErr != nil {
-		guessErr = GetGuess(&Q)
+		guessErr = GetGuess(&Q, reader)
 	}
 	// Print feedback and correct answer.
 	fmt.Print(JudgeGuess(Q))
@@ -210,7 +209,8 @@ Enter 'Q' to exit.
 
 		// Run RunGuess function repeatedly.
 		for {
-			RunGuess()
+			reader := bufio.NewReader(os.Stdin)
+			RunGuess(reader)
 			fmt.Println()
 		}
 		return
