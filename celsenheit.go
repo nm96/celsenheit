@@ -120,6 +120,8 @@ func GetGuess(Q_p *Question, reader *bufio.Reader) error {
 	// Quit session if user has typed "q", "Q", "quit" etc.
 	if len(guessStr) > 0 && strings.ToUpper(guessStr[:1]) == "Q" {
 		fmt.Println("Exiting.")
+		fmt.Printf("(%.3g\u00b0%s is equivalent to %.3g\u00b0%s.)\n", Q_p.val,
+		Q_p.fromScale, Q_p.ans, Q_p.toScale)
 		os.Exit(0)
 	}
 
@@ -245,5 +247,4 @@ Enter 'Q' to exit.
 			e.g. : celsenheit 20.0 C F`)
 		return
 	}
-
 }

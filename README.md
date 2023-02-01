@@ -8,7 +8,7 @@ temperature conversion.
 
 - Clone or download this repository.
 - Install the latest version of Go if not present: https://go.dev/doc/install.
-- Run `go test` to run tests.
+- Run `go test .` to run tests.
 - Run `go install` to install celsenheit to the default Go install directory.
 - Alternatively, run `go build` to compile the `celsenheit` binary and then
   move it to `~/bin/` or similar.
@@ -40,6 +40,8 @@ mode, as shown here:
 $ celsenheit
 Celsenheit guess mode: practice mental conversion of temperature values
 =======================================================================
+
+Enter 'Q' to exit.
 
 Convert 17.9°C to °F: 
 ```
