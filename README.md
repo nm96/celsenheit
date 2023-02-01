@@ -4,6 +4,16 @@
 Celsius and Fahrenheit, and an interactive app for practicing mental
 temperature conversion.
 
+## Installation
+
+- Clone or download this repository.
+- Install the latest version of Go if not present: https://go.dev/doc/install.
+- Run `go test` to run tests.
+- Run `go install` to install celsenheit to the default Go install directory.
+- Alternatively, run `go build` to compile the `celsenheit` binary and then
+  move it to `~/bin/` or similar.
+
+
 ## Conversion mode
 
 Usage - three command-line arguments required:
