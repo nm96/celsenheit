@@ -13,7 +13,6 @@ $ celsenheit degree_value convert_from convert_to
 e.g.:
 ```
 $ celsenheit 20.0 C F
-Converting 20.0°C to °F:
 20°C is equivalent to 68°F.
 ```
 
